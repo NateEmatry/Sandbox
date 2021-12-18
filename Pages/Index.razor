@@ -1,11 +1,7 @@
 ﻿@page "/"
 
 <PageTitle>Index</PageTitle>
-
-<h1 class="title">Welcome to the sandbox.</h1>
-@if (!gameover) {<h4>Game On</h4>}
-else {<h4>Game Over</h4>}
-
+<h1>Sandbox</h1>
 <div class="game-container">
     <svg xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -23,14 +19,17 @@ else {<h4>Game Over</h4>}
     </div>
 </div>
 
+<input type="text" class="game-console-input" @bind="@consoleInput">
+
 @code {
 
-    static readonly int WIDTH = 640;
-    static readonly int HEIGHT = 480;
-    static readonly int BUTTON_WIDTH = 200;
-    static readonly int BUTTON_HEIGHT = 480;
+    static readonly int WIDTH = 900;
+    static readonly int HEIGHT = 600;
 
     bool gameover = true;
+    int lineCount = 1;
+
+    string consoleInput = ">> ";
 
     string SVG_Markup = "<rect x=\"0\" y=\"0\" width=\"" + WIDTH + "\" height=\"" + HEIGHT
         + "\" fill=\"#0a0a64\"></rect>";
@@ -39,6 +38,7 @@ else {<h4>Game Over</h4>}
         gameover = false;
         SVG_Markup = Rect(0, 0, WIDTH/2, HEIGHT, "#aabbaa")
             + Rect(WIDTH/2, 0, WIDTH/2, HEIGHT, "#bbaaaa");
+
     }
 
     public void EndGame() {

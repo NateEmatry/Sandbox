@@ -1,9 +1,8 @@
 .arena {
-    width: 640px;
-    min-width: 640px;
-    height: 480px;
-    min-height: 480px;
-    background-color: rgb(193, 230, 230);
+    width: 900px;
+    min-width: 900px;
+    height: 600px;
+    min-height: 600px;
     border-radius: 5px;
 }
 
@@ -21,12 +20,28 @@
     margin-bottom: 20px;
 }
 
+.game-console-input {
+    width: 900px;
+    min-width: 900px;
+    height: 30px;
+    min-height: 30px;
+    margin-top: 10px;
+    border-radius: 5px;
+    overflow: auto;
+    background-color: black;
+    color: white;
+    border: none;
+    font-weight: bolder;
+    padding: 5px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
 .game-button-column {
     
-    width: 200px;
-    min-width: 200px;
-    height: 480px;
-    min-height: 480px;
+    width: 150px;
+    min-width: 150px;
+    height: 600px;
+    min-height: 600px;
     margin-left: 30px;
     background-color: rgb(218, 214, 214);
     border-radius: 5px;
