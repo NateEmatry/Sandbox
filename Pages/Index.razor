@@ -1,0 +1,58 @@
+﻿@page "/"
+
+<PageTitle>Index</PageTitle>
+
+<h1 class="title">Welcome to the sandbox.</h1>
+@if (!gameover) {<h4>Game On</h4>}
+else {<h4>Game Over</h4>}
+
+<div class="game-container">
+    <svg xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            xmlns:ev="http://www.w3.org/2001/sml-events"
+            viewbox="0 0 @WIDTH @HEIGHT"
+            class="arena">
+
+    @((MarkupString)SVG_Markup)
+
+    </svg>
+
+    <div class="game-button-column">
+        <button class="game-button" @onclick="@StartGame">Start Game</button>
+        <button class="game-button" @onclick="@EndGame">End Game</button>
+    </div>
+</div>
+
+@code {
+
+    static readonly int WIDTH = 640;
+    static readonly int HEIGHT = 480;
+    static readonly int BUTTON_WIDTH = 200;
+    static readonly int BUTTON_HEIGHT = 480;
+
+    bool gameover = true;
+
+    string SVG_Markup = "<rect x=\"0\" y=\"0\" width=\"" + WIDTH + "\" height=\"" + HEIGHT
+        + "\" fill=\"#0a0a64\"></rect>";
+
+    public void StartGame() {
+        gameover = false;
+        SVG_Markup = Rect(0, 0, WIDTH/2, HEIGHT, "#aabbaa")
+            + Rect(WIDTH/2, 0, WIDTH/2, HEIGHT, "#bbaaaa");
+    }
+
+    public void EndGame() {
+        SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, "#aaaabb");
+        gameover = true;
+    }
+
+    public string Rect(int x, int y, int width, int height, string color) {
+
+        return "<rect x=\"" + x
+            + "\" y=\"" + y
+            + "\" width=\"" + width
+            + "\" height=\"" +height
+            + "\" fill=\"" + color + "\"></rect>";
+    }
+
+}
