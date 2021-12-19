@@ -6,6 +6,49 @@
     border-radius: 5px;
 }
 
+
+
+.game-button {
+
+    margin: 10px 0px 10px 10px;
+    border-radius: 5px;
+}
+
+
+.game-console {
+    
+    width: 900px;
+    min-width: 900px;
+    height: 250px;
+    min-height: 250px;
+    background-color: rgb(44, 42, 42);
+    color: white;
+    overflow: auto;
+    border-radius: 5px;
+    margin-top: 10px;
+    font-weight: bolder;
+    padding: 15px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+
+.game-console-input {
+    width: 900px;
+    min-width: 900px;
+    height: 30px;
+    min-height: 30px;
+    margin-bottom: 10px;
+    border-radius: 5px 5px 5px 5px;
+    overflow: auto;
+    background-color: black;
+    color: white;
+    border: none;
+    font-weight: bolder;
+    padding: 5px 5px 5px 10px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+
 .game-container {
     
     display: flex;
@@ -15,38 +58,16 @@
     
 }
 
-.game-button {
 
-    margin-bottom: 20px;
-}
-
-.game-console-input {
+.game-top-row {
+    
     width: 900px;
     min-width: 900px;
-    height: 30px;
-    min-height: 30px;
-    margin-top: 10px;
-    border-radius: 5px;
-    overflow: auto;
-    background-color: black;
-    color: white;
-    border: none;
-    font-weight: bolder;
+    display: flex;
+    justify-content: space-between;
     padding: 5px;
-    font-family: 'Courier New', Courier, monospace;
 }
 
-.game-button-column {
-    
-    width: 150px;
-    min-width: 150px;
-    height: 600px;
-    min-height: 600px;
-    margin-left: 30px;
-    background-color: rgb(218, 214, 214);
-    border-radius: 5px;
-    padding: 10px;
-}
 
 .title {
     margin-bottom: 20px;

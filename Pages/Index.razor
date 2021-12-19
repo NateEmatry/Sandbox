@@ -1,49 +1,109 @@
-﻿@page "/"
+﻿@using System.Collections.Generic;
+@page "/"
+
 
 <PageTitle>Index</PageTitle>
-<h1>Sandbox</h1>
-<div class="game-container">
-    <svg xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            xmlns:ev="http://www.w3.org/2001/sml-events"
-            viewbox="0 0 @WIDTH @HEIGHT"
-            class="arena">
 
-    @((MarkupString)SVG_Markup)
-
-    </svg>
-
-    <div class="game-button-column">
+<div class="game-top-row">
+    <h1>Sandbox</h1>
+    <div>
         <button class="game-button" @onclick="@StartGame">Start Game</button>
         <button class="game-button" @onclick="@EndGame">End Game</button>
     </div>
 </div>
 
-<input type="text" class="game-console-input" @bind="@consoleInput">
+    <input type="text" class="game-console-input" @bind="@ConsoleInput" @bind:event="oninput"
+        @onkeyup="@ProcessConsoleInput" @onkeyup:preventDefault>
+
+<svg xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:ev="http://www.w3.org/2001/sml-events"
+        viewbox="0 0 @WIDTH @HEIGHT"
+        class="arena">
+
+@((MarkupString)SVG_Markup)
+
+</svg>
+
+<div class="game-console">
+    @((MarkupString)ConsoleOutput)
+</div>
 
 @code {
 
     static readonly int WIDTH = 900;
     static readonly int HEIGHT = 600;
+    static readonly char[] BADCHARS = {'<', '>', '(', ')', '/', '\\', '\'', '\"', '=', ';'};
 
     bool gameover = true;
-    int lineCount = 1;
 
-    string consoleInput = ">> ";
+    private string ConsoleInput = ">> ";
+    private string ConsoleOutput = "";
+    private List<string> ConsoleEntries = new List<string>();
+    private int ConsoleEntriesIndex = 0;
+
 
     string SVG_Markup = "<rect x=\"0\" y=\"0\" width=\"" + WIDTH + "\" height=\"" + HEIGHT
         + "\" fill=\"#0a0a64\"></rect>";
 
-    public void StartGame() {
+    private void StartGame() {
         gameover = false;
         SVG_Markup = Rect(0, 0, WIDTH/2, HEIGHT, "#aabbaa")
             + Rect(WIDTH/2, 0, WIDTH/2, HEIGHT, "#bbaaaa");
 
     }
 
-    public void EndGame() {
+    private void EndGame() {
         SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, "#aaaabb");
         gameover = true;
+    }
+
+    private void GetUserKeyInput(KeyboardEventArgs kArgs) {
+
+        PrintToConsole("User pressed " + kArgs.Key);
+
+    }
+
+    private void ProcessConsoleInput(KeyboardEventArgs kArgs) {
+
+        if (kArgs.Code.Equals("ArrowUp"))
+        {
+            PrintToConsole("Up Arrow pressed.");
+        }
+
+        if (kArgs.Code.Equals("Enter"))
+        {
+            string entry = ConsoleInput;
+
+            foreach(char c in BADCHARS)
+                entry = entry.Replace(c, ' ');
+            
+            entry = entry.ToLower().Trim();
+
+            while(entry.Contains("  "))
+             entry = entry.Replace("  ", " ");
+
+            
+            if (entry.Equals("clear"))
+            {
+                ConsoleOutput = "";
+            }
+
+            else
+            {
+                PrintToConsole("You entered: " + entry);
+            }
+
+            ConsoleEntries.Add(entry);
+            ConsoleEntriesIndex = ConsoleEntries.Count - 1;
+            ConsoleInput = ">> ";
+        }
+
+    }
+
+    private void PrintToConsole(string str) {
+
+        ConsoleOutput  = ("<div> - " + str + "</div>" + ConsoleOutput);
     }
 
     public string Rect(int x, int y, int width, int height, string color) {
