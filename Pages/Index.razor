@@ -7,7 +7,7 @@
 <div class="game-top-row">
     <h1>Sandbox</h1>
     <div>
-        <button class="game-button" @onclick="@StartGame">Start Game</button>
+        <button class="game-button" @onclick="@StartGame" @onkeydown="@GetUserKeyInput">Start Game</button>
         <button class="game-button" @onclick="@EndGame">End Game</button>
     </div>
 </div>
@@ -29,39 +29,69 @@
     @((MarkupString)ConsoleOutput)
 </div>
 
+
+
 @code {
 
-    static readonly int WIDTH = 900;
-    static readonly int HEIGHT = 600;
-    static readonly char[] BADCHARS = {'<', '>', '(', ')', '/', '\\', '\'', '\"', '=', ';'};
+    private static readonly int WIDTH = 900;
+    private static readonly int HEIGHT = 600;
+    private static readonly char[] BADCHARS = {'<', '>', '(', ')', '/', '\\', '\'', '\"', '=', ';'};
 
-    bool gameover = true;
+    private bool gameover = true;
 
     private string ConsoleInput = ">> ";
     private string ConsoleOutput = "";
     private List<string> ConsoleEntries = new List<string>();
     private int ConsoleEntriesIndex = 0;
 
+    private static readonly string BlueColor = "#aaaacc";
+    private static readonly string GreenColor = "#aaccaa";
+    private static readonly string RedColor = "#ccaaaa";
+
+    private byte pRed = 0;
+    private byte pBlue = 0;
+    private byte pGreen = 0;
+    private string PlayerColor = "";
+    private static readonly string StartColor = "#000000";
+
+
 
     string SVG_Markup = "<rect x=\"0\" y=\"0\" width=\"" + WIDTH + "\" height=\"" + HEIGHT
-        + "\" fill=\"#0a0a64\"></rect>";
+        + "\" fill=\"" + StartColor + "\"></rect>";
 
     private void StartGame() {
         gameover = false;
-        SVG_Markup = Rect(0, 0, WIDTH/2, HEIGHT, "#aabbaa")
-            + Rect(WIDTH/2, 0, WIDTH/2, HEIGHT, "#bbaaaa");
+        PlayerColor = StartColor;
+        SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, PlayerColor);
+        Console.WriteLine("Game started.");
 
     }
 
+    private void PauseGame() {
+
+        Console.WriteLine("Game paused.");
+    }
+
     private void EndGame() {
-        SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, "#aaaabb");
+        SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, StartColor);
         gameover = true;
+        Console.WriteLine("Game ended.");
     }
 
     private void GetUserKeyInput(KeyboardEventArgs kArgs) {
 
-        PrintToConsole("User pressed " + kArgs.Key);
+        @* Console.WriteLine("User pressed " + kArgs.Code); *@
 
+        if (kArgs.Code.Equals("KeyR"))
+            ++pRed;
+
+        if (kArgs.Code.Equals("KeyG"))
+            ++pGreen;
+
+        if (kArgs.Code.Equals("KeyB"))
+            ++pBlue;
+
+        SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, GetHexColor(pRed, pGreen, pBlue));
     }
 
     private void ProcessConsoleInput(KeyboardEventArgs kArgs) {
@@ -83,10 +113,27 @@
             while(entry.Contains("  "))
              entry = entry.Replace("  ", " ");
 
+            if (String.IsNullOrEmpty(entry))
+                return;
             
             if (entry.Equals("clear"))
             {
                 ConsoleOutput = "";
+            }
+
+            else if (entry.Equals("red"))
+            {
+                SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, RedColor);
+            }
+
+            else if (entry.Equals("green"))
+            {
+                SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, GreenColor);
+            }
+
+            else if (entry.Equals("blue"))
+            {
+                SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, BlueColor);
             }
 
             else
@@ -113,6 +160,11 @@
             + "\" width=\"" + width
             + "\" height=\"" +height
             + "\" fill=\"" + color + "\"></rect>";
+    }
+
+    public string GetHexColor(byte r, byte g, byte b) {
+
+        return "#" + Convert.ToHexString(new byte[3] {r, g, b});
     }
 
 }

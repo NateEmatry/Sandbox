@@ -6,9 +6,7 @@ function keyDownJS(event) {
 
     switch (event.keyCode)
     {
-        // case 37:
         case 38:
-        // case 39:
         case 40:
         {
             event.preventDefault();
@@ -17,5 +15,5 @@ function keyDownJS(event) {
         default: break;
     }
 
-    console.log("User pressed " + event.keyCode);
+    // console.log("User pressed " + event.keyCode);
 }
