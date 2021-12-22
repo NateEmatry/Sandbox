@@ -37,15 +37,11 @@
     private static readonly int WIDTH = 900;
     private static readonly int HEIGHT = 600;
     private static readonly char[] BADCHARS = {'<', '>', '(', ')', '/', '\\', '\'', '\"', '=', ';'};
-    private static readonly int FPS = 40;
-    private static readonly int MSperFrame = 1000/FPS;
 
     private static readonly string StartColor = "#a0a0a0";
     private static readonly string BlueColor = "#aaaacc";
     private static readonly string GreenColor = "#aaccaa";
     private static readonly string RedColor = "#ccaaaa";
-
-    private bool gameover = true;
 
     private string ConsoleInput = ">> ";
     private string ConsoleOutput = "";
@@ -62,8 +58,10 @@
 
     private string PlayerColor = "";
 
-    private Timer gameTimer = new Timer(MSperFrame);
     private bool TimerDisposed = false;
+    private static int FPS = 40;
+    private static int MSperFrame = 1000/FPS;
+    private Timer gameTimer = new Timer(MSperFrame);
     private bool FrameComplete = true;
 
 
@@ -73,7 +71,7 @@
     private string Buffer = "";
 
     private void StartGame() {
-        gameover = false;
+
         if (TimerDisposed) gameTimer = new Timer(MSperFrame);
         PlayerColor = StartColor;
         SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, PlayerColor);
@@ -88,15 +86,10 @@
 
     private void UpdateGame(Object? source, ElapsedEventArgs e) {
 
-        if (gameover)
-        {
-            gameTimer.Enabled = false;
-            return;
-        }
-
         if (!FrameComplete)
         {
             Console.WriteLine("Frame was not completed.");
+            if (FPS >= 10) --FPS;
         }
 
         FrameComplete = false;
@@ -128,6 +121,8 @@
 
     private void EndGame() {
 
+        gameTimer.Enabled = false;
+
         try {
             gameTimer.Dispose();
             TimerDisposed = true;
@@ -137,7 +132,6 @@
         }
 
         SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, StartColor);
-        gameover = true;
         Console.WriteLine("Game ended.");
     }
 
