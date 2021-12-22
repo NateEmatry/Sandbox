@@ -1,4 +1,5 @@
 ﻿@using System.Collections.Generic;
+@using System.Timers;
 @page "/"
 
 
@@ -36,6 +37,13 @@
     private static readonly int WIDTH = 900;
     private static readonly int HEIGHT = 600;
     private static readonly char[] BADCHARS = {'<', '>', '(', ')', '/', '\\', '\'', '\"', '=', ';'};
+    private static readonly int FPS = 40;
+    private static readonly int MSperFrame = 1000/FPS;
+
+    private static readonly string StartColor = "#a0a0a0";
+    private static readonly string BlueColor = "#aaaacc";
+    private static readonly string GreenColor = "#aaccaa";
+    private static readonly string RedColor = "#ccaaaa";
 
     private bool gameover = true;
 
@@ -44,27 +52,66 @@
     private List<string> ConsoleEntries = new List<string>();
     private int ConsoleEntriesIndex = 0;
 
-    private static readonly string BlueColor = "#aaaacc";
-    private static readonly string GreenColor = "#aaccaa";
-    private static readonly string RedColor = "#ccaaaa";
+    private int pRed = 160;
+    private int pBlue = 160;
+    private int pGreen = 160;
 
-    private byte pRed = 0;
-    private byte pBlue = 0;
-    private byte pGreen = 0;
+    private int vRed = 1;
+    private int vGreen = 2;
+    private int vBlue = 3;
+
     private string PlayerColor = "";
-    private static readonly string StartColor = "#000000";
+
+    private Timer gameTimer = new Timer(MSperFrame);
+    private bool TimerDisposed = false;
+    private bool FrameComplete = true;
 
 
-
-    string SVG_Markup = "<rect x=\"0\" y=\"0\" width=\"" + WIDTH + "\" height=\"" + HEIGHT
+    private string SVG_Markup = "<rect x=\"0\" y=\"0\" width=\"" + WIDTH + "\" height=\"" + HEIGHT
         + "\" fill=\"" + StartColor + "\"></rect>";
+
+    private string Buffer = "";
 
     private void StartGame() {
         gameover = false;
+        if (TimerDisposed) gameTimer = new Timer(MSperFrame);
         PlayerColor = StartColor;
         SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, PlayerColor);
+
+        gameTimer.Elapsed += UpdateGame;
+        gameTimer.AutoReset = true;
+        gameTimer.Enabled = true;
+
         Console.WriteLine("Game started.");
 
+    }
+
+    private void UpdateGame(Object? source, ElapsedEventArgs e) {
+
+        if (gameover)
+        {
+            gameTimer.Enabled = false;
+            return;
+        }
+
+        if (!FrameComplete)
+        {
+            Console.WriteLine("Frame was not completed.");
+        }
+
+        FrameComplete = false;
+
+        if (pRed == 255 || pRed == 0) vRed *= -1;
+        if (pGreen >= 254 || pGreen <= 1) vGreen *= -1;
+        if (pBlue >= 253 || pBlue <= 2) vBlue *= -1;
+
+        pRed += vRed;
+        pGreen += vGreen;
+        pBlue += vBlue;
+
+        Buffer = Rect(0, 0, WIDTH, HEIGHT, GetHexColor(pRed, pGreen, pBlue));
+        Render();
+        Console.WriteLine("Time: " + e.SignalTime);
     }
 
     private void PauseGame() {
@@ -72,7 +119,23 @@
         Console.WriteLine("Game paused.");
     }
 
+    private void Render() {
+
+        SVG_Markup = Buffer;
+        StateHasChanged();
+        FrameComplete = true;
+    }
+
     private void EndGame() {
+
+        try {
+            gameTimer.Dispose();
+            TimerDisposed = true;
+        }
+        catch (Exception e) {
+            Console.WriteLine(e.Message);
+        }
+
         SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, StartColor);
         gameover = true;
         Console.WriteLine("Game ended.");
@@ -162,9 +225,9 @@
             + "\" fill=\"" + color + "\"></rect>";
     }
 
-    public string GetHexColor(byte r, byte g, byte b) {
+    public string GetHexColor(int r, int g, int b) {
 
-        return "#" + Convert.ToHexString(new byte[3] {r, g, b});
+        return "#" + Convert.ToHexString(new byte[3] {(byte)r, (byte)g, (byte)b});
     }
 
 }
