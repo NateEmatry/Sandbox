@@ -1,5 +1,6 @@
 ﻿@using System.Collections.Generic;
 @using System.Timers;
+@using Sandbox.Source;
 @page "/"
 
 
@@ -13,9 +14,6 @@
     </div>
 </div>
 
-    <input type="text" class="game-console-input" @bind="@ConsoleInput" @bind:event="oninput"
-        @onkeyup="@ProcessConsoleInput" @onkeyup:preventDefault>
-
 <svg xmlns="http://www.w3.org/2000/svg"
         xmlns:xlink="http://www.w3.org/1999/xlink"
         xmlns:ev="http://www.w3.org/2001/sml-events"
@@ -25,6 +23,9 @@
 @((MarkupString)SVG_Markup)
 
 </svg>
+
+    <input type="text" class="game-console-input" @bind="@ConsoleInput" @bind:event="oninput"
+        @onkeyup="@ProcessConsoleInput" @onkeyup:preventDefault>
 
 <div class="game-console">
     @((MarkupString)ConsoleOutput)
@@ -76,6 +77,9 @@
         PlayerColor = StartColor;
         SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, PlayerColor);
 
+        Sprite ball = new Sprite(10, 10);
+        ball.Markup = "";
+
         gameTimer.Elapsed += UpdateGame;
         gameTimer.AutoReset = true;
         gameTimer.Enabled = true;
@@ -104,7 +108,7 @@
 
         Buffer = Rect(0, 0, WIDTH, HEIGHT, GetHexColor(pRed, pGreen, pBlue));
         Render();
-        Console.WriteLine("Time: " + e.SignalTime);
+        @* Console.WriteLine("Time: " + e.SignalTime); *@
     }
 
     private void PauseGame() {
@@ -137,18 +141,30 @@
 
     private void GetUserKeyInput(KeyboardEventArgs kArgs) {
 
-        @* Console.WriteLine("User pressed " + kArgs.Code); *@
+        if (kArgs.Code.Equals("KeyA"))
+        {
+            PrintToConsole("A pressed.");
 
-        if (kArgs.Code.Equals("KeyR"))
-            ++pRed;
+        }
 
-        if (kArgs.Code.Equals("KeyG"))
-            ++pGreen;
+        else if (kArgs.Code.Equals("KeyW"))
+        {
+            PrintToConsole("W pressed.");
 
-        if (kArgs.Code.Equals("KeyB"))
-            ++pBlue;
+        }
 
-        SVG_Markup = Rect(0, 0, WIDTH, HEIGHT, GetHexColor(pRed, pGreen, pBlue));
+        else if (kArgs.Code.Equals("KeyS"))
+        {
+            PrintToConsole("S pressed.");
+
+        }
+
+        else if (kArgs.Code.Equals("KeyD"))
+        {
+            PrintToConsole("D pressed.");
+
+        }
+
     }
 
     private void ProcessConsoleInput(KeyboardEventArgs kArgs) {
